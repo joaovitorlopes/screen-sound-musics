@@ -12,6 +12,12 @@ public class Musics {
     @ManyToOne
     private Artists artists;
 
+    public Musics() {}
+
+    public Musics(String musicName) {
+        this.title = musicName;
+    }
+
     public Long getId() {
         return id;
     }
@@ -39,6 +45,6 @@ public class Musics {
     @Override
     public String toString() {
         return  "Music='" + title + '\'' +
-                ", artists=" + artists;
+                ", artists=" + artists.getName();
     }
 }

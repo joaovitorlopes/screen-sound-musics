@@ -1,10 +1,22 @@
 package joaovitorlopes.com.github.screensoundmusics.main;
 
+import joaovitorlopes.com.github.screensoundmusics.models.Artists;
+import joaovitorlopes.com.github.screensoundmusics.models.Musics;
+import joaovitorlopes.com.github.screensoundmusics.models.TypeArtist;
+import joaovitorlopes.com.github.screensoundmusics.repository.ArtistsRepository;
+
+import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Main {
 
+    private final ArtistsRepository repository;
     private Scanner reading = new Scanner(System.in);
+
+    public Main(ArtistsRepository repository) {
+        this.repository = repository;
+    }
 
     public void showMenu() {
         var option = -1;
@@ -52,11 +64,40 @@ public class Main {
     }
 
     private void registerArtists() {
+        var registerNew = "Y";
 
+        while(registerNew.equalsIgnoreCase("Y")) {
+            System.out.println("Enter a artist(s) name(s): ");
+            var artistsName = reading.nextLine();
+            System.out.println("Enter a type of this artist(s): (SOLO, PAIR or BAND)");
+            var type = reading.nextLine();
+            TypeArtist typeArtist = TypeArtist.valueOf(type.toUpperCase());
+            Artists artists = new Artists(artistsName, typeArtist);
+            repository.save(artists);
+            System.out.println("Register other(s) artist(s)? (Y/N)");
+            registerNew = reading.nextLine();
+        }
+    }
+
+    private void registerMusics() {
+        System.out.println("Register music(s) which artist(s)? ");
+        var name = reading.nextLine();
+        Optional<Artists> artists = repository.findByNameContainingIgnoreCase(name);
+        if (artists.isPresent()) {
+            System.out.println("Enter a music name: ");
+            var musicName = reading.nextLine();
+            Musics musics = new Musics(musicName);
+            musics.setArtists(artists.get());
+            artists.get().getMusics().add(musics);
+            repository.save(artists.get());
+        } else {
+            System.out.println("Artist(s) not found!");
+        }
     }
 
     private void listMusics() {
-
+        List<Artists> artists = repository.findAll();
+        artists.forEach(System.out::println);
     }
 
     private void searchMusicsByArtists() {
@@ -64,10 +105,6 @@ public class Main {
     }
 
     private void searchAboutArtists() {
-
-    }
-
-    private void registerMusics() {
 
     }
 }

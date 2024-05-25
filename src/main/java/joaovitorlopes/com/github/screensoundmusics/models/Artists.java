@@ -16,8 +16,15 @@ public class Artists {
     @Enumerated(EnumType.STRING)
     private TypeArtist type;
 
-    @OneToMany(mappedBy = "artists")
+    @OneToMany(mappedBy = "artists", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Musics> musics = new ArrayList<>();
+
+    public Artists() {}
+
+    public Artists(String artistsName, TypeArtist typeArtist) {
+        this.name = artistsName;
+        this.type = typeArtist;
+    }
 
     public Long getId() {
         return id;

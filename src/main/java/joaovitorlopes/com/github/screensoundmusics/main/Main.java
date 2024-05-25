@@ -4,6 +4,7 @@ import joaovitorlopes.com.github.screensoundmusics.models.Artists;
 import joaovitorlopes.com.github.screensoundmusics.models.Musics;
 import joaovitorlopes.com.github.screensoundmusics.models.TypeArtist;
 import joaovitorlopes.com.github.screensoundmusics.repository.ArtistsRepository;
+import joaovitorlopes.com.github.screensoundmusics.services.SearchByChatGPT;
 
 import java.util.List;
 import java.util.Optional;
@@ -97,14 +98,20 @@ public class Main {
 
     private void listMusics() {
         List<Artists> artists = repository.findAll();
-        artists.forEach(System.out::println);
+        artists.forEach(a -> a.getMusics().forEach(System.out::println));
     }
 
     private void searchMusicsByArtists() {
-
+        System.out.println("Enter a Artist(s) Name: ");
+        var artistsName = reading.nextLine();
+        List<Musics> musics = repository.searchMusicsByArtists(artistsName);
+        musics.forEach(System.out::println);
     }
 
     private void searchAboutArtists() {
-
+        System.out.println("Search about which Artist(s)?");
+        var artistsName = reading.nextLine();
+        var response = SearchByChatGPT.getInfo(artistsName);
+        System.out.println(response.trim());
     }
 }
